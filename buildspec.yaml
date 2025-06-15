@@ -1,0 +1,34 @@
+version: 0.2
+
+env:
+  variables:
+    LAMBDA_FUNCTION_NAME: TicTacToeLambda
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo "Listing current directory content"
+      - ls -la
+      - echo "Installing dependencies from requirements.txt"
+      - pip install -r requirements.txt -t python
+      - echo "Dependencies installed"
+
+  build:
+    commands:
+      - echo "Copying source files to deployment package directory"
+      - cp lambda_function.py python/
+      - cp knowledge.txt python/
+      - cd python
+      - echo "Zipping all Lambda contents"
+      - zip -r ../lambda_function.zip .
+      - cd ..
+      - echo "Updating Lambda function $LAMBDA_FUNCTION_NAME in AWS"
+      - aws lambda update-function-code --function-name $LAMBDA_FUNCTION_NAME --zip-file fileb://lambda_function.zip
+      - echo "Invoking Lambda to trigger next pipeline"
+      - aws lambda invoke --function-name $LAMBDA_FUNCTION_NAME --payload '{"queryStringParameters":{"q":"Trigger next pipeline"}}' response.json
+
+artifacts:
+  files:
+    - lambda_function.zip
