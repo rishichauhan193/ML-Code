@@ -21,7 +21,7 @@ def setup_qa_chain():
     db = FAISS.from_texts(texts, embeddings)
     retriever = db.as_retriever()
 
-    fake_llm = FakeListLLM(responses=["This is a placeholder response."])
+    fake_llm = FakeListLLM(responses=["This is a placeholder Response."])
     return RetrievalQA.from_chain_type(llm=fake_llm, chain_type="stuff", retriever=retriever)
 
 qa = setup_qa_chain()
