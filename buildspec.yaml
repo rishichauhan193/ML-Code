@@ -17,6 +17,11 @@ phases:
       - zip -r ../lambda-deployment.zip . -x ".venv/*" "venv/*"
       - cd ..
 
+  post_build:
+    commands:
+      - echo "Updating Lambda function code..."
+      - aws lambda update-function-code --function-name TicTacToeLambda --zip-file fileb://lambda-deployment.zip
+
 artifacts:
   files:
     - lambda-deployment.zip
