@@ -7,13 +7,16 @@ phases:
     commands:
       - echo "Installing dependencies..."
       - pip install -r requirements.txt -t package
+
   build:
     commands:
       - echo "Copying source files..."
-      - cp lambda_function.py knowledge.txt package/
+      - cp lambda_function.py knowledge.txt requirements.txt package/
       - cd package
-      - echo "Zipping files..."
-      - zip -r ../lambda-deployment.zip .
+      - echo "Zipping files for Lambda deployment (excluding venv)..."
+      - zip -r ../lambda-deployment.zip . -x ".venv/*" "venv/*"
+      - cd ..
+
 artifacts:
   files:
     - lambda-deployment.zip
